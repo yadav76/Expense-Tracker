@@ -1,7 +1,7 @@
 <template>
   <HeaderComp />
   <div class="container">
-    <BalanceComp :total="total" />
+    <BalanceComp :total="total" @reset="handleResetTransactions" />
     <IncomeExpenses :income="income" :expenses="expenses" />
     <TransactionList
       :transactions="transactions"
@@ -52,8 +52,8 @@ const income = computed(() => {
       return acc + transaction.amount;
     }, 0);
 });
-const expenses = computed(() => {
-  return transactions.value
+let expenses = computed(() => {
+  return -transactions.value
     .filter((transaction) => transaction.amount < 0)
     .reduce((acc, transaction) => {
       return acc + transaction.amount;
@@ -62,15 +62,16 @@ const expenses = computed(() => {
 
 //add Data
 const handleSubmittedTransactions = (transactionData) => {
+  const numberAmount = parseInt(transactionData.amount);
   // console.log(transactionData);
   transactions.value.push({
     id: generateUniqueId(),
     text: transactionData.text,
-    amount: +transactionData.amount,
+    amount: numberAmount,
   });
 
   //when new transaction added then save to localStorage
-  // saveTransactionsToLocalStorage();
+  saveTransactionsToLocalStorage();
 
   //transaction added successfully
   toast("Transaction Added Successfully!");
@@ -97,6 +98,17 @@ const handleDeletedTransaction = (transactionId) => {
 //save transactions to localStorage
 const saveTransactionsToLocalStorage = () => {
   localStorage.setItem("transactions", JSON.stringify(transactions.value));
+};
+
+//Reset all transactions
+const handleResetTransactions = (resetValue) => {
+  if (resetValue) {
+    transactions.value = [];
+    localStorage.setItem("transactions", "");
+
+    toast.success("All Trasactions Are Removed!");
+    return;
+  }
 };
 
 // export default {

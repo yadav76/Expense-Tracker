@@ -17,8 +17,7 @@
         {negative-expense, positive-income}
       </label>
       <input
-        type="text"
-        name=""
+        type="Number"
         id="amount"
         v-model="amount"
         placeholder="Enter amount..."
@@ -53,6 +52,10 @@ const onSubmit = (event) => {
     text: text.value,
     amount: amount.value,
   };
+
+  // console.log(parseInt(amount.value));
+  //convert negative number from String to Number
+  amount.value = parseInt(amount.value);
 
   //now pass the data to 'App'
   emits("submitTransactions", transactionData);
